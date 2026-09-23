@@ -145,9 +145,10 @@ forgotten, ticked ones last.
 3. Right-click an empty part of the taskbar, open **Remember positions**, and
    tick the apps.
 
-Windows 11 with its own taskbar, made on 25H2. With the old taskbar that
-ExplorerPatcher or StartAllBack bring back, the mod does nothing. On 21H2, and
-on 22H2 without recent updates, buttons may still open at the end.
+Windows 11 with its own taskbar, tested on 25H2 (build 26200) with four
+monitors. With the old taskbar that ExplorerPatcher or StartAllBack bring back,
+the mod does nothing. On 21H2, and on 22H2 without recent updates, buttons may
+still open at the end.
 
 ### Updating from 0.1.0
 

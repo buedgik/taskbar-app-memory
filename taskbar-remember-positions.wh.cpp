@@ -110,9 +110,10 @@ with Taskbar Icon Separators is one such change).
 - **If the submenu doesn't appear** (the mod's log says "No menu"), choose
   All apps in the settings, or, with the mod disabled, change the `-` to `r`
   on the app's line in `order.txt`.
-- **Windows 11 with its own taskbar**, made on 25H2. With the old taskbar that
-  ExplorerPatcher or StartAllBack bring back, the mod does nothing. On 21H2,
-  and on 22H2 without recent updates, buttons may still open at the end.
+- **Windows 11 with its own taskbar**, tested on 25H2 (build 26200) with four
+  monitors. With the old taskbar that ExplorerPatcher or StartAllBack bring
+  back, the mod does nothing. On 21H2, and on 22H2 without recent updates,
+  buttons may still open at the end.
 */
 // ==/WindhawkModReadme==
 
