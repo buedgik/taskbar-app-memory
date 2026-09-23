@@ -1,11 +1,11 @@
 // ==WindhawkMod==
-// @id              taskbar-remember-positions
-// @name            Taskbar Remember Positions
+// @id              taskbar-app-memory
+// @name            Taskbar App Memory
 // @description     Apps you choose go back to their place on the taskbar when they reopen, instead of to the end
-// @version         0.2.0
+// @version         0.2.1
 // @author          buedgik
 // @github          https://github.com/buedgik
-// @homepage        https://github.com/buedgik/taskbar-remember-positions
+// @homepage        https://github.com/buedgik/taskbar-app-memory
 // @license         MIT
 // @include         explorer.exe
 // @architecture    x86-64
@@ -14,7 +14,7 @@
 
 // ==WindhawkModReadme==
 /*
-# Taskbar Remember Positions
+# Taskbar App Memory
 
 On the Windows 11 taskbar, an app that isn't pinned loses its place when you
 close it: open it again and its button goes to the end. With this mod, the
@@ -95,12 +95,12 @@ with Taskbar Icon Separators is one such change).
   window's button becomes the app's place.
 - **The list is the file `order.txt`**, in
   `%ProgramData%\Windhawk\Engine\ModsWritable\mod-storage\`, then the mod's
-  folder (`taskbar-remember-positions`, or `local@taskbar-remember-positions`
-  for a mod compiled in Windhawk's editor), then a folder named after your
+  folder (`taskbar-app-memory`, or `local@taskbar-app-memory` for a mod
+  compiled in Windhawk's editor), then a folder named after your
   account's SID (`whoami /user` shows it). It's read when the mod starts and
   rewritten while it runs: to reset or edit it, disable the mod, delete or
   edit the file, then enable the mod again. Its first line is
-  `taskbar-remember-positions v2`, and each line after it is one app, in
+  `taskbar-app-memory v2`, and each line after it is one app, in
   order, with tabs between: the day it was last seen, `r` if it's ticked or
   `-` if not, its App ID, and its name. A file the mod can't
   read is moved aside as `order.txt.<date>-<time>.bad`; one it can only read
@@ -808,7 +808,8 @@ int PlaceFor(const Buttons& buttons, const std::wstring& key) {
 //   v2: <day last seen> TAB <r if marked, - if not> TAB <app key> TAB <name>
 //   v1: <day last seen> TAB <app key>  (read, never written)
 
-constexpr char kFileHeader[] = "taskbar-remember-positions v";
+constexpr char kFileHeader[] = "taskbar-app-memory v";
+constexpr char kOldFileHeader[] = "taskbar-remember-positions v";
 constexpr unsigned kFileVersion = 2;
 constexpr size_t kMaxTitleLength = 256;
 
@@ -967,8 +968,15 @@ LoadResult LoadOrderFile(std::vector<Entry>& order) {
         line = line.substr(first, last - first + 1);
         if (header) {
             size_t prefix = sizeof(kFileHeader) - 1;
-            if (line.compare(0, prefix, kFileHeader) != 0 ||
-                line.size() == prefix ||
+            // The mod's name before it was renamed, for a list copied over
+            // from then.
+            if (line.compare(0, sizeof(kOldFileHeader) - 1, kOldFileHeader) ==
+                0) {
+                prefix = sizeof(kOldFileHeader) - 1;
+            } else if (line.compare(0, prefix, kFileHeader) != 0) {
+                return LoadResult::BadFormat;
+            }
+            if (line.size() == prefix ||
                 line.find_first_not_of("0123456789", prefix) !=
                     std::string::npos) {
                 return LoadResult::BadFormat;
@@ -1554,8 +1562,8 @@ namespace wf = winrt::Windows::Foundation;
 namespace wux = winrt::Windows::UI::Xaml;
 namespace wuxc = winrt::Windows::UI::Xaml::Controls;
 
-constexpr wchar_t kMenuItemName[] = L"WindhawkTaskbarRememberPositions";
-constexpr wchar_t kMenuDividerName[] = L"WindhawkTaskbarRememberPositionsLine";
+constexpr wchar_t kMenuItemName[] = L"WindhawkTaskbarAppMemory";
+constexpr wchar_t kMenuDividerName[] = L"WindhawkTaskbarAppMemoryLine";
 
 bool IsPortugueseUi() {
     return PRIMARYLANGID(GetUserDefaultUILanguage()) == LANG_PORTUGUESE;
@@ -1906,7 +1914,7 @@ void RunOnTaskbarThread(void (*callback)()) {
         callback();
         return;
     }
-    g_runMessage = RegisterWindowMessageW(L"Windhawk_TaskbarRememberPositions");
+    g_runMessage = RegisterWindowMessageW(L"Windhawk_TaskbarAppMemory");
     g_runCallback = callback;
     HHOOK hook = SetWindowsHookExW(WH_CALLWNDPROC, RunCallWndProc, nullptr,
                                    thread);

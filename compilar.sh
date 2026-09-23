@@ -5,7 +5,7 @@
 # compile on one target and fail on another. Like Windhawk: no @architecture
 # means x86 and x86-64, and x86-64 also means ARM64 (amd64 is x64 only).
 # Check only: the DLLs go to the temp folder, Windhawk doesn't load them.
-# Usage: sh compilar.sh taskbar-remember-positions.wh.cpp
+# Usage: sh compilar.sh taskbar-app-memory.wh.cpp
 set -e
 MOD="$1"
 SRC="$(pwd)/$MOD"

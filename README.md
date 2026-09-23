@@ -1,4 +1,4 @@
-# Taskbar Remember Positions
+# Taskbar App Memory
 
 A [Windhawk](https://windhawk.net) mod for the Windows 11 taskbar: the apps you
 choose go back to their place when they reopen, instead of to the end.
@@ -101,10 +101,10 @@ public symbols, which Windhawk downloads.
 - **With the [Taskbar Grouping](https://windhawk.net/mods/taskbar-grouping)
   mod**, which can give each window a button of its own, a ticked app's first
   button goes back to its place, and the buttons of its other windows go where
-  Taskbar Grouping's settings say. Their places aren't remembered: an app that sat right
-  next to another app's extra-window buttons can come back on their far side,
-  and dropping an app between another app and that app's extra windows isn't
-  kept. When the first window closes, Taskbar Grouping passes its identity on
+  Taskbar Grouping's settings say. Their places aren't remembered: an app that
+  sat right next to another app's extra-window buttons can come back on their
+  far side, and dropping an app between another app and that app's extra windows
+  isn't kept. When the first window closes, Taskbar Grouping passes its identity on
   to another of the app's windows, and that window's button becomes the app's
   place.
 - **If the submenu doesn't appear** (the mod's log says "No menu"), choose All
@@ -117,9 +117,8 @@ public symbols, which Windhawk downloads.
 | --- | --- |
 | `%ProgramData%\Windhawk\Engine\ModsWritable\mod-storage\<mod folder>\<your SID>\order.txt` | the remembered order and the ticks, one app per line |
 
-The mod folder is `taskbar-remember-positions` for the mod installed from
-Windhawk, and `local@taskbar-remember-positions` for one compiled in Windhawk's
-editor. With Windhawk's logging on, the mod writes the exact path to the log
+The mod folder is `taskbar-app-memory` for the mod installed from Windhawk, and
+`local@taskbar-app-memory` for one compiled in Windhawk's editor. With Windhawk's logging on, the mod writes the exact path to the log
 when it starts.
 
 Windhawk's storage is shared by every account on the computer, so each account
@@ -128,8 +127,7 @@ the mod creates readable only by that account and the administrators.
 
 The file is read when the mod starts and rewritten while it runs. To reset or
 edit it, disable the mod, delete or edit the file, then enable the mod again.
-Its first line is `taskbar-remember-positions v2`, and each line after it is
-one app, in order, with tabs between: the day it was last seen, `r` if it's
+Its first line is `taskbar-app-memory v2`, and each line after it is one app, in order, with tabs between: the day it was last seen, `r` if it's
 ticked or `-` if not, its App ID, and its name. A file the mod can't read is
 moved aside as `order.txt.<date>-<time>.bad`; one it can only read in part is
 copied there, then rewritten with the lines it could read. Uninstalling the mod
@@ -140,7 +138,7 @@ forgotten, ticked ones last.
 
 1. Install [Windhawk](https://windhawk.net).
 2. Create a new mod, paste
-   [`taskbar-remember-positions.wh.cpp`](taskbar-remember-positions.wh.cpp),
+   [`taskbar-app-memory.wh.cpp`](taskbar-app-memory.wh.cpp),
    compile it.
 3. Right-click an empty part of the taskbar, open **Remember positions**, and
    tick the apps.
@@ -150,13 +148,20 @@ monitors. With the old taskbar that ExplorerPatcher or StartAllBack bring back,
 the mod does nothing. On 21H2, and on 22H2 without recent updates, buttons may
 still open at the end.
 
-### Updating from 0.1.0
+### Coming from Taskbar Remember Positions
+
+Versions 0.1.0 and 0.2.0 were called Taskbar Remember Positions
+(`taskbar-remember-positions`). Windhawk sees the new name as a different mod,
+with a storage folder of its own, so install this one and remove the old one.
+To keep the order and the ticks, disable both, copy `order.txt` from the old
+mod's folder (`...\mod-storage\taskbar-remember-positions\<your SID>\`, or
+`local@taskbar-remember-positions`) into the new one's, then enable the new mod;
+it reads the old file.
 
 Version 0.1.0 remembered every app. From 0.2.0 no app is ticked at first, and
-each app that opens takes the place Windows gives it. To keep 0.1.0's behaviour
-and the order it learned, choose **All apps** in the mod's settings right after
-updating; otherwise, tick the apps you want kept. The file is read as before
-and saved in the new format.
+each app that opens takes the place Windows gives it. To keep 0.1.0's behaviour,
+choose **All apps** in the mod's settings; otherwise, tick the apps you want
+kept.
 
 ## Build check
 
@@ -165,7 +170,7 @@ target Windhawk builds it for (x64 and ARM64), without installing anything, to
 catch errors and warnings:
 
 ```sh
-sh compilar.sh taskbar-remember-positions.wh.cpp
+sh compilar.sh taskbar-app-memory.wh.cpp
 ```
 
 ## License
