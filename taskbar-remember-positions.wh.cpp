@@ -1,15 +1,15 @@
 // ==WindhawkMod==
 // @id              taskbar-remember-positions
 // @name            Taskbar Remember Positions
-// @description     An app you close and open again goes back to its place on the taskbar, instead of to the end
-// @version         0.1.0
+// @description     Apps you choose go back to their place on the taskbar when they reopen, instead of to the end
+// @version         0.2.0
 // @author          buedgik
 // @github          https://github.com/buedgik
 // @homepage        https://github.com/buedgik/taskbar-remember-positions
 // @license         MIT
 // @include         explorer.exe
 // @architecture    x86-64
-// @compilerOptions -lcomctl32 -ladvapi32
+// @compilerOptions -lcomctl32 -ladvapi32 -lole32 -loleaut32 -lruntimeobject
 // ==/WindhawkMod==
 
 // ==WindhawkModReadme==
@@ -17,34 +17,43 @@
 # Taskbar Remember Positions
 
 On the Windows 11 taskbar, an app that isn't pinned loses its place when you
-close it: open it again and its button goes to the end. With this mod it goes
-back where it was.
+close it: open it again and its button goes to the end. With this mod, the
+apps you choose go back where they were.
 
-- **Arrange the buttons by dragging them**, as usual. The mod remembers the
-  order you leave them in.
-- **Close an app and open it later**, even after restarting the computer: its
-  button goes back between the same neighbours it had.
+- **Choose the apps**: right-click an empty part of the taskbar, open
+  **Remember positions** (Lembrar posições on a Portuguese Windows), and tick
+  the apps whose place should be kept. It lists the open apps that aren't
+  pinned (pinned apps stay where Windows puts them anyway), then the ticked
+  apps that are closed or pinned since, so you can untick those too. In the
+  mod's settings you can have every app remembered instead; the submenu then
+  only says so.
+- **Arrange the buttons by dragging them**, as usual. The mod remembers where
+  you leave the ticked apps.
+- **Close a ticked app and open it later**, even after restarting the
+  computer: its button goes back between the same neighbours it had.
+- **The other apps go where Windows puts them**, as usual. The mod keeps track
+  of where they are, since the ticked apps are placed next to them.
 - **Pinned apps stay where Windows puts them.** The mod never moves them, it
-  only uses them as landmarks: an app you left between two pinned apps goes
-  back between them.
-- **An app the mod has never seen** goes to the end, as usual, and is
-  remembered from then on.
+  only uses them as landmarks: a ticked app you left between two pinned apps
+  goes back between them.
 
 ## How the place is chosen
 
 The mod keeps one list of every app it has seen on the taskbar, in the order
-they were last seen, closed apps included. When an app opens, its button goes
-right after the nearest app that comes before it in that list and is on the
-taskbar now. When none of those are there, it goes in front of the apps on
+they were last seen, closed apps included. When a ticked app opens, its button
+goes right after the nearest app that comes before it in that list and is on
+the taskbar now. When none of those are there, it goes in front of the apps on
 the taskbar that the list has.
 
 So the order you arrange is kept whatever order the apps open in, which is
 what makes it survive a restart: the apps that start with Windows each go to
-their place as they appear.
+their place as they appear. A ticked app's place is certain next to pinned
+apps and other ticked apps; next to apps that aren't ticked it can shift,
+since those go wherever Windows puts them.
 
-Only what happens while the mod is running is learned. Buttons rearranged
-while it's disabled go back to their old places when their apps reopen; drag
-them with the mod on to change that. Pinned apps are the exception: when their
+Only what happens while the mod is running is learned. Ticked apps rearranged
+while it's disabled go back to their old places when they reopen; drag them
+with the mod on to change that. Pinned apps are the exception: when their
 order changes without a drag (another program moving a pin, or pins moved
 while the mod was off), the mod follows it from the next time a button opens
 or is dragged. Until then, an app next to the pin that moved can come back on
@@ -56,8 +65,10 @@ with Taskbar Icon Separators is one such change).
 - **Apps are told apart by their App ID**, the identity Windows uses to put
   windows under one button. An app that changes it is a new app to the mod:
   a browser's new profile, or a portable app moved to another folder.
-- **An app you unpin keeps the place it had among the pinned apps**: when it
-  opens again, it goes there. Drag it once to put it somewhere else.
+- **A ticked app you unpin keeps the place it had among the pinned apps**:
+  when it opens again, it goes there (with All apps, every app does). Drag it
+  once to put it somewhere else. An app that isn't ticked opens at the end,
+  like any other.
 - **Only the order of the buttons is kept**, not the order of the windows
   inside one button.
 - **With several monitors** there is one list for all the taskbars, and each
@@ -68,13 +79,15 @@ with Taskbar Icon Separators is one such change).
   others, and until the next drag an app next to it there can come back on
   its other side. With the two "taskbar where window is open" settings, an app
   can have a button on two taskbars but has one place in the list, so arrange
-  the apps on the main taskbar; and on the other taskbars, where the pinned
+  the apps on the main taskbar (ticking an app shown only on another monitor
+  takes its place from that monitor, which can put it on the other side of a
+  pinned app on the main taskbar); and on the other taskbars, where the pinned
   apps aren't shown, a pinned app's button is left where Windows puts it.
 - **Switching virtual desktops** takes buttons off the taskbar and puts them
-  back; they come back in the remembered order.
+  back; the ticked ones come back in the remembered order.
 - **With the Taskbar Grouping mod**, which can give each window a button of its
-  own, an app's first button goes back to its place, and the buttons of its
-  other windows go where Taskbar Grouping's settings say. Their places aren't
+  own, a ticked app's first button goes back to its place, and the buttons of
+  its other windows go where Taskbar Grouping's settings say. Their places aren't
   remembered: an app that sat right next to another app's extra-window buttons
   can come back on their far side, and dropping an app between another app and
   that app's extra windows isn't kept. When the first window closes, Taskbar
@@ -87,22 +100,47 @@ with Taskbar Icon Separators is one such change).
   account's SID (`whoami /user` shows it). It's read when the mod starts and
   rewritten while it runs: to reset or edit it, disable the mod, delete or
   edit the file, then enable the mod again. Its first line is
-  `taskbar-remember-positions v1`, and each line after it is one app, in
-  order: the day it was last seen, a tab, and its App ID. A file the mod can't
+  `taskbar-remember-positions v2`, and each line after it is one app, in
+  order, with tabs between: the day it was last seen, `r` if it's ticked or
+  `-` if not, its App ID, and its name. A file the mod can't
   read is moved aside as `order.txt.<date>-<time>.bad`; one it can only read
   in part is copied there, then rewritten with the lines it could read.
-  Uninstalling the mod deletes the folder.
-  Past 256 apps, the ones not seen for the longest time are forgotten.
+  Uninstalling the mod deletes the folder. Past 256 apps, the ones not seen
+  for the longest time are forgotten, ticked ones last.
+- **If the submenu doesn't appear** (the mod's log says "No menu"), choose
+  All apps in the settings, or, with the mod disabled, change the `-` to `r`
+  on the app's line in `order.txt`.
 - **Windows 11 with its own taskbar**, made on 25H2. With the old taskbar that
   ExplorerPatcher or StartAllBack bring back, the mod does nothing. On 21H2,
   and on 22H2 without recent updates, buttons may still open at the end.
 */
 // ==/WindhawkModReadme==
 
+// ==WindhawkModSettings==
+/*
+- remember: marked
+  $name: Apps whose place is remembered
+  $description: >-
+    Tick an app by right-clicking an empty part of the taskbar, then
+    "Remember positions". The others go where Windows puts them.
+  $options:
+  - marked: Only the apps ticked in the taskbar menu
+  - all: All apps
+*/
+// ==/WindhawkModSettings==
+
 #include <windhawk_utils.h>
 
 #include <commctrl.h>
 #include <sddl.h>
+
+#undef GetCurrentTime
+
+#include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.UI.Xaml.Controls.h>
+#include <winrt/Windows.UI.Xaml.Media.h>
+#include <winrt/Windows.UI.Xaml.h>
 
 #include <algorithm>
 #include <atomic>
@@ -148,6 +186,13 @@ CTaskGroup_GetAppID_t CTaskGroup_GetAppID;
 
 using CTaskGroup_GetFlags_t = DWORD(WINAPI*)(void* pThis);
 CTaskGroup_GetFlags_t CTaskGroup_GetFlags;
+
+// The app's name, as the menu shows it. Optional: the key stands in for it.
+using CTaskGroup_GetTitleText_t = HRESULT(WINAPI*)(void* pThis,
+                                                   void* taskItem,
+                                                   WCHAR* text,
+                                                   int length);
+CTaskGroup_GetTitleText_t CTaskGroup_GetTitleText;
 
 // What a button group looks like, to recognize one among the DPA_InsertPtr
 // calls that happen while a group is being created or moved.
@@ -380,6 +425,12 @@ struct Entry {
     // When the app was last on a taskbar, in days, to know which apps to forget
     // when the list gets too long.
     DWORD lastSeen;
+    // Marked in the menu: the app goes back to its place. The others are in
+    // the list only as neighbours.
+    bool remember = false;
+    // The app's name as the menu showed it when the app was last ticked or
+    // unticked, to list a marked app that's closed.
+    std::wstring title;
 };
 
 constexpr size_t kMaxApps = 256;
@@ -399,6 +450,10 @@ int g_saveRetries;
 
 std::atomic<bool> g_unloading;
 
+// The "Apps whose place is remembered" setting: all of them, or only the ones
+// marked in the menu.
+std::atomic<bool> g_rememberAll;
+
 DWORD Today() {
     FILETIME ft;
     GetSystemTimeAsFileTime(&ft);
@@ -415,10 +470,20 @@ int IndexOf(const std::vector<Entry>& order, const std::wstring& key) {
     return -1;
 }
 
-// Forgets the apps not seen for the longest time until there are few enough.
-// The apps on the taskbar at hand (`shown`) are never the ones forgotten, and
-// between apps last seen the same day, the one further down the list goes:
-// that's where the apps seen only once end up, not the pinned apps at the top.
+// Called with the order lock held.
+bool IsRemembered(const std::wstring& key) {
+    if (g_rememberAll) {
+        return true;
+    }
+    int at = IndexOf(g_order, key);
+    return at >= 0 && g_order[at].remember;
+}
+
+// Forgets the apps not seen for the longest time until there are few enough:
+// first the unticked ones not on the taskbar at hand (`shown`), then ticked
+// ones not on it, and one on it only when nothing else is left. Between apps
+// last seen the same day, the one further down the list goes: that's where the
+// apps seen only once end up, not the pinned apps at the top.
 void PruneOrder(std::vector<Entry>& order,
                 const std::vector<std::wstring>& shown) {
     if (order.size() <= kMaxApps) {
@@ -426,11 +491,17 @@ void PruneOrder(std::vector<Entry>& order,
     }
     std::unordered_set<std::wstring> onTaskbar(shown.begin(), shown.end());
     while (order.size() > kMaxApps) {
+        // Unticked apps first; ticked ones only when there are more of those
+        // than room; never the apps on the taskbar unless nothing else is left.
         int victim = -1;
-        for (size_t i = order.size(); i-- > 0;) {
-            if (!onTaskbar.count(order[i].key) &&
-                (victim < 0 || order[i].lastSeen < order[victim].lastSeen)) {
-                victim = (int)i;
+        for (int pass = 0; pass < 2 && victim < 0; pass++) {
+            for (size_t i = order.size(); i-- > 0;) {
+                if (!onTaskbar.count(order[i].key) &&
+                    (pass == 1 || !order[i].remember) &&
+                    (victim < 0 ||
+                     order[i].lastSeen < order[victim].lastSeen)) {
+                    victim = (int)i;
+                }
             }
         }
         if (victim < 0) {
@@ -446,7 +517,9 @@ void CommitOrder(std::vector<Entry>&& order,
     bool same = order.size() == g_order.size();
     for (size_t i = 0; same && i < order.size(); i++) {
         same = order[i].key == g_order[i].key &&
-               order[i].lastSeen == g_order[i].lastSeen;
+               order[i].lastSeen == g_order[i].lastSeen &&
+               order[i].remember == g_order[i].remember &&
+               order[i].title == g_order[i].title;
     }
     if (!same) {
         g_order = std::move(order);
@@ -517,10 +590,13 @@ void LearnMove(const std::vector<std::wstring>& keys, int moved) {
     }
 
     std::vector<Entry> order = g_order;
+    Entry entry{key, 0};
     int old = IndexOf(order, key);
     if (old >= 0) {
+        entry = order[old];
         order.erase(order.begin() + old);
     }
+    entry.lastSeen = Today();
 
     int at = -1;
     for (int j = moved; j-- > 0 && at < 0;) {
@@ -547,7 +623,7 @@ void LearnMove(const std::vector<std::wstring>& keys, int moved) {
     if (at < 0) {
         at = old >= 0 ? old : (int)order.size();
     }
-    order.insert(order.begin() + at, Entry{key, Today()});
+    order.insert(order.begin() + at, entry);
     CommitOrder(std::move(order), keys);
 }
 
@@ -727,10 +803,61 @@ int PlaceFor(const Buttons& buttons, const std::wstring& key) {
 //
 // A text file per user in the mod's storage folder (the storage is shared by
 // all the accounts on the computer), one app per line, the order being the
-// order of the lines.
+// order of the lines:
+//   v2: <day last seen> TAB <r if marked, - if not> TAB <app key> TAB <name>
+//   v1: <day last seen> TAB <app key>  (read, never written)
 
 constexpr char kFileHeader[] = "taskbar-remember-positions v";
-constexpr unsigned kFileVersion = 1;
+constexpr unsigned kFileVersion = 2;
+constexpr size_t kMaxTitleLength = 256;
+
+std::string ToUtf8(const std::wstring& text) {
+    int length = WideCharToMultiByte(CP_UTF8, 0, text.data(), (int)text.size(),
+                                     nullptr, 0, nullptr, nullptr);
+    std::string result(length > 0 ? length : 0, '\0');
+    if (length > 0) {
+        WideCharToMultiByte(CP_UTF8, 0, text.data(), (int)text.size(),
+                            result.data(), length, nullptr, nullptr);
+    }
+    return result;
+}
+
+std::wstring FromUtf8(const std::string& text) {
+    int length = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, text.data(),
+                                     (int)text.size(), nullptr, 0);
+    std::wstring result(length > 0 ? length : 0, L'\0');
+    if (length > 0) {
+        MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, text.data(),
+                            (int)text.size(), result.data(), length);
+    }
+    return result;
+}
+
+// An app's name as it can go in the file: one line, not too long, whole
+// characters.
+std::wstring CleanTitle(std::wstring title) {
+    if (title.size() > kMaxTitleLength) {
+        title.resize(kMaxTitleLength);
+        if (IS_HIGH_SURROGATE(title.back())) {
+            title.pop_back();
+        }
+    }
+    for (auto& c : title) {
+        if (c < 0x20 || c == 0x7F) {
+            c = L' ';
+        }
+    }
+    if (WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, title.data(),
+                            (int)title.size(), nullptr, 0, nullptr,
+                            nullptr) <= 0) {
+        return L"";
+    }
+    size_t first = title.find_first_not_of(L' ');
+    if (first == std::wstring::npos) {
+        return L"";
+    }
+    return title.substr(first, title.find_last_not_of(L' ') - first + 1);
+}
 
 std::wstring g_userSid;
 std::wstring g_orderFilePath;
@@ -793,7 +920,8 @@ LoadResult LoadOrderFile(std::vector<Entry>& order) {
         CloseHandle(file);
         return LoadResult::ReadError;
     }
-    // The mod writes at most 256 keys of at most 1024 characters.
+    // The mod writes at most 256 keys of at most 1024 characters, with names
+    // of at most 256.
     if (before.nFileSizeHigh || before.nFileSizeLow > 1024 * 1024) {
         CloseHandle(file);
         return LoadResult::BadFormat;
@@ -814,9 +942,11 @@ LoadResult LoadOrderFile(std::vector<Entry>& order) {
     }
 
     // Edited by hand, it may have gained a byte order mark, blank lines, and
-    // spaces around the fields or in place of the tab.
+    // spaces at the ends of lines; in a v1 file, spaces in place of the tab
+    // too. A v2 file needs its tabs.
     size_t position = data.compare(0, 3, "\xEF\xBB\xBF") == 0 ? 3 : 0;
     bool header = true;
+    unsigned long version = 0;
     bool lost = false;
     DWORD today = Today();
     std::unordered_set<std::wstring> seen;
@@ -842,39 +972,59 @@ LoadResult LoadOrderFile(std::vector<Entry>& order) {
                     std::string::npos) {
                 return LoadResult::BadFormat;
             }
-            unsigned long version = strtoul(line.c_str() + prefix, nullptr, 10);
-            if (version != kFileVersion) {
-                return version > kFileVersion ? LoadResult::Newer
-                                              : LoadResult::BadFormat;
+            version = strtoul(line.c_str() + prefix, nullptr, 10);
+            if (version > kFileVersion) {
+                return LoadResult::Newer;
+            }
+            if (version < 1) {
+                return LoadResult::BadFormat;
             }
             header = false;
             continue;
         }
-        // <day the app was last seen> TAB <app key>
+        // <day the app was last seen>, then (v2) whether it's marked, then its
+        // key, then (v2) its name.
         size_t digits = line.find_first_not_of("0123456789");
-        size_t keyStart = digits == std::string::npos
-                              ? std::string::npos
-                              : line.find_first_not_of(" \t", digits);
         if (digits == 0 || digits == std::string::npos ||
-            (line[digits] != '\t' && line[digits] != ' ') ||
-            keyStart == std::string::npos) {
+            (line[digits] != '\t' && line[digits] != ' ')) {
             lost = true;
             continue;
         }
         unsigned long lastSeen = strtoul(line.c_str(), nullptr, 10);
-        int wideLength = MultiByteToWideChar(
-            CP_UTF8, MB_ERR_INVALID_CHARS, line.data() + keyStart,
-            (int)(line.size() - keyStart), nullptr, 0);
-        std::wstring appId(wideLength > 0 ? wideLength : 0, L'\0');
-        if (wideLength > 0) {
-            MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
-                                line.data() + keyStart,
-                                (int)(line.size() - keyStart), appId.data(),
-                                wideLength);
+        std::string keyText;
+        std::string titleText;
+        bool remember = false;
+        if (version == 1) {
+            // Spaces are taken for the tab too: a v1 line has nothing else
+            // after the key.
+            size_t keyStart = line.find_first_not_of(" \t", digits);
+            if (keyStart == std::string::npos) {
+                lost = true;
+                continue;
+            }
+            keyText = line.substr(keyStart);
+        } else {
+            // Tabs only: keys and names have spaces of their own.
+            size_t flag = digits + 1;
+            size_t keyStart = flag + 2;
+            if (line[digits] != '\t' || line.size() <= keyStart ||
+                (line[flag] != 'r' && line[flag] != '-') ||
+                line[flag + 1] != '\t') {
+                lost = true;
+                continue;
+            }
+            remember = line[flag] == 'r';
+            size_t keyEnd = line.find('\t', keyStart);
+            keyText = line.substr(keyStart, keyEnd == std::string::npos
+                                                ? std::string::npos
+                                                : keyEnd - keyStart);
+            if (keyEnd != std::string::npos) {
+                titleText = line.substr(keyEnd + 1);
+            }
         }
         // Put through the same rules as a key read from the taskbar, so a
         // line edited by hand can't hold a key the taskbar would never match.
-        std::wstring key = KeyFromAppId(appId.c_str());
+        std::wstring key = KeyFromAppId(FromUtf8(keyText).c_str());
         if (key.empty()) {
             lost = true;
             continue;
@@ -882,8 +1032,10 @@ LoadResult LoadOrderFile(std::vector<Entry>& order) {
         if (seen.insert(key).second) {
             // A day still to come (a clock that was ahead, or a typo) would
             // keep the app from ever being forgotten.
-            order.push_back(
-                Entry{key, (DWORD)std::min<unsigned long>(lastSeen, today)});
+            Entry entry{key, (DWORD)std::min<unsigned long>(lastSeen, today)};
+            entry.remember = remember;
+            entry.title = CleanTitle(FromUtf8(titleText));
+            order.push_back(std::move(entry));
             // Enough to fill the list; the rest of a file this long can only
             // be noise.
             if (order.size() >= kMaxApps * 4) {
@@ -930,13 +1082,9 @@ bool SaveOrderFile(const std::vector<Entry>& order) {
     std::string data =
         std::string(kFileHeader) + std::to_string(kFileVersion) + "\r\n";
     for (const auto& entry : order) {
-        int length = WideCharToMultiByte(CP_UTF8, 0, entry.key.data(),
-                                         (int)entry.key.size(), nullptr, 0,
-                                         nullptr, nullptr);
-        std::string key(length, '\0');
-        WideCharToMultiByte(CP_UTF8, 0, entry.key.data(), (int)entry.key.size(),
-                            key.data(), length, nullptr, nullptr);
-        data += std::to_string(entry.lastSeen) + "\t" + key + "\r\n";
+        data += std::to_string(entry.lastSeen) + "\t" +
+                (entry.remember ? "r" : "-") + "\t" + ToUtf8(entry.key) + "\t" +
+                ToUtf8(entry.title) + "\r\n";
     }
 
     switch (EnsureUserFolder()) {
@@ -1151,11 +1299,15 @@ int InsertNewGroup(HDPA buttonGroups,
     std::wstring key =
         TaskGroupKey(groupInsert.taskGroup, taskbar.showsPinned, &pinned);
     int index = DA_LAST;
+    bool remembered = false;
     {
         std::lock_guard<std::mutex> lock(g_orderMutex);
-        // Left where it lands: a pinned app (its place is Windows'), and
-        // another button of an app that already has one here, which only
-        // Taskbar Grouping makes, and places as its settings say.
+        remembered = !key.empty() && IsRemembered(key);
+        bool learnable = !key.empty() && !pinned;
+        // Left where it lands: an app that isn't marked, a pinned app (its
+        // place is Windows'), and another button of an app that already has
+        // one here, which only Taskbar Grouping makes, and places as its
+        // settings say.
         bool alreadyHere = false;
         std::wstring app = AppOfKey(key);
         for (const auto& shown : buttons.apps) {
@@ -1172,14 +1324,15 @@ int InsertNewGroup(HDPA buttonGroups,
         } else if (!newOnMainTaskbar) {
             t_newOnMainTaskbar = nullptr;
         }
-        if (!key.empty() && !pinned && !alreadyHere && !newOnMainTaskbar) {
-            // At Explorer start the pinned apps come first, so by the first
-            // other button they're all there to check. Only on the main
-            // taskbar: the others can hold a new pin where Windows put it
-            // without regard to the rest, until the next drag.
-            if (taskbar.main) {
-                ReconcilePins(buttons, -1);
-            }
+        // The pins are checked before any app is placed or learned, ticked or
+        // not. At Explorer start the pinned apps come first, so by the first
+        // other button they're all there to check. Only on the main taskbar:
+        // the others can hold a new pin where Windows put it without regard
+        // to the rest, until the next drag.
+        if (learnable && !alreadyHere && !newOnMainTaskbar && taskbar.main) {
+            ReconcilePins(buttons, -1);
+        }
+        if (remembered && !pinned && !alreadyHere && !newOnMainTaskbar) {
             int place = PlaceFor(buttons, key);
             if (place >= 0 && place < (int)buttons.keys.size()) {
                 index = place;
@@ -1198,6 +1351,13 @@ int InsertNewGroup(HDPA buttonGroups,
         // New pins get their button on the main taskbar this way.
         if (pinned && taskbar.main) {
             LearnPinnedPlace(buttons, FindGroup(buttons, groupInsert.taskGroup));
+        } else if (!pinned && !remembered && taskbar.main && !key.empty()) {
+            // Where Windows put it is its place now: the marked apps find it
+            // there as a neighbour.
+            int at = FindGroup(buttons, groupInsert.taskGroup);
+            if (at >= 0) {
+                LearnMove(buttons.keys, at);
+            }
         }
         TakeInNewApps(buttons.keys);
         ScheduleSave();
@@ -1283,8 +1443,490 @@ bool WINAPI CTaskListWnd_TryMoveGroup_Hook(void* pThis,
 }
 
 // ---------------------------------------------------------------------------
+// The taskbars' buttons, outside the hooks
+// ---------------------------------------------------------------------------
+//
+// For the menu, which is built with no button being added or moved: each
+// taskbar's list is found in its CTaskListWnd, which its MSTaskListWClass
+// window holds, as the field that points at a DPA whose items are all button
+// groups. Every pointer is checked readable before it's followed.
+
+bool IsReadable(const void* p, size_t size) {
+    MEMORY_BASIC_INFORMATION info;
+    if ((ULONG_PTR)p < 0x10000 || !VirtualQuery(p, &info, sizeof(info)) ||
+        info.State != MEM_COMMIT ||
+        (info.Protect & (PAGE_NOACCESS | PAGE_GUARD | PAGE_EXECUTE))) {
+        return false;
+    }
+    return (const BYTE*)p + size <=
+           (const BYTE*)info.BaseAddress + info.RegionSize;
+}
+
+HDPA FindButtonGroups(void* taskList) {
+    if (!IsReadable(taskList, 64 * sizeof(void*))) {
+        return nullptr;
+    }
+    for (int i = 0; i < 64; i++) {
+        void* candidate = ((void**)taskList)[i];
+        if (!IsReadable(candidate, 2 * sizeof(void*))) {
+            continue;
+        }
+        int count = *(int*)candidate;
+        void** items = *(void***)((BYTE*)candidate + sizeof(void*));
+        if (count <= 0 || count > 4096 ||
+            !IsReadable(items, count * sizeof(void*))) {
+            continue;
+        }
+        bool buttonGroups = true;
+        for (int j = 0; j < count && buttonGroups; j++) {
+            buttonGroups = IsReadable(items[j], sizeof(void*)) &&
+                           *(void**)items[j] ==
+                               CTaskBtnGroup_ITaskBtnGroup_vftable;
+        }
+        if (buttonGroups) {
+            return (HDPA)candidate;
+        }
+    }
+    return nullptr;
+}
+
+// The taskbars run on one thread; the main one comes first.
+std::vector<void*> TaskListsOfThisThread() {
+    std::vector<HWND> trays;
+    EnumThreadWindows(
+        GetCurrentThreadId(),
+        [](HWND window, LPARAM param) -> BOOL {
+            WCHAR className[32];
+            if (GetClassNameW(window, className, ARRAYSIZE(className))) {
+                auto& trays = *(std::vector<HWND>*)param;
+                if (_wcsicmp(className, L"Shell_TrayWnd") == 0) {
+                    trays.insert(trays.begin(), window);
+                } else if (_wcsicmp(className, L"Shell_SecondaryTrayWnd") == 0) {
+                    trays.push_back(window);
+                }
+            }
+            return TRUE;
+        },
+        (LPARAM)&trays);
+
+    std::vector<void*> taskLists;
+    for (HWND tray : trays) {
+        WCHAR className[32];
+        GetClassNameW(tray, className, ARRAYSIZE(className));
+        HWND host = _wcsicmp(className, L"Shell_TrayWnd") == 0
+                        ? (HWND)GetPropW(tray, L"TaskbandHWND")
+                        : FindWindowExW(tray, nullptr, L"WorkerW", nullptr);
+        HWND list = host ? FindWindowExW(host, nullptr, L"MSTaskListWClass",
+                                         nullptr)
+                         : nullptr;
+        void* taskList = list ? (void*)GetWindowLongPtrW(list, 0) : nullptr;
+        if (taskList) {
+            taskLists.push_back(taskList);
+        }
+    }
+    return taskLists;
+}
+
+std::wstring TitleOf(void* taskGroup) {
+    WCHAR title[MAX_PATH] = L"";
+    if (!CTaskGroup_GetTitleText || !taskGroup ||
+        FAILED(CTaskGroup_GetTitleText(taskGroup, nullptr, title,
+                                       ARRAYSIZE(title)))) {
+        return L"";
+    }
+    title[ARRAYSIZE(title) - 1] = L'\0';
+    return CleanTitle(title);
+}
+
+// ---------------------------------------------------------------------------
+// The menu
+// ---------------------------------------------------------------------------
+//
+// Right-clicking an empty part of the taskbar shows Windows' menu (Task
+// Manager, Taskbar settings), which Taskbar.View.dll builds in
+// ContextMenus::ShowTaskbarSettingsContextMenu, appending each item with
+// IVector<MenuFlyoutItemBase>::Append. The mod adds a "Remember positions"
+// submenu in front of the first item, the way the Taskbar Restart Explorer
+// and Taskbar Icon Separators mods add theirs, with a check mark per app.
+
+namespace wf = winrt::Windows::Foundation;
+namespace wux = winrt::Windows::UI::Xaml;
+namespace wuxc = winrt::Windows::UI::Xaml::Controls;
+
+constexpr wchar_t kMenuItemName[] = L"WindhawkTaskbarRememberPositions";
+constexpr wchar_t kMenuDividerName[] = L"WindhawkTaskbarRememberPositionsLine";
+
+bool IsPortugueseUi() {
+    return PRIMARYLANGID(GetUserDefaultUILanguage()) == LANG_PORTUGUESE;
+}
+
+Buttons WithoutButton(const Buttons& buttons, int skip) {
+    Buttons rest = buttons;
+    rest.keys.erase(rest.keys.begin() + skip);
+    rest.apps.erase(rest.apps.begin() + skip);
+    rest.pinned.erase(rest.pinned.begin() + skip);
+    rest.groups.erase(rest.groups.begin() + skip);
+    return rest;
+}
+
+// Marks or unmarks an app. Marking an open app makes its place now the place
+// to go back to: the order's place for it is kept when it already brings the
+// app back where its button is (so the closed apps next to it keep their
+// side), and learned from the taskbar otherwise, from the main taskbar or, when
+// the app isn't there, from the first one showing it.
+void ToggleRemembered(const std::wstring& key, const std::wstring& title) {
+    std::vector<void*> taskLists = TaskListsOfThisThread();
+    Buttons buttons;
+    bool haveButtons = false;
+    bool onMainTaskbar = false;
+    int shownAt = -1;
+    for (size_t t = 0; t < taskLists.size(); t++) {
+        HDPA list = FindButtonGroups(taskLists[t]);
+        Buttons listButtons;
+        if (!list || !ReadButtons(list, t == 0 || AllTaskbarsShowPinnedApps(),
+                                  listButtons)) {
+            continue;
+        }
+        auto it = std::find(listButtons.keys.begin(), listButtons.keys.end(),
+                            key);
+        int at = it == listButtons.keys.end()
+                     ? -1
+                     : (int)(it - listButtons.keys.begin());
+        if (t == 0 || at >= 0) {
+            buttons = std::move(listButtons);
+            haveButtons = true;
+            onMainTaskbar = t == 0;
+            shownAt = at;
+        }
+        if (at >= 0) {
+            break;
+        }
+    }
+
+    std::lock_guard<std::mutex> lock(g_orderMutex);
+    if (haveButtons) {
+        // As before a drag: the pins first, the app's own button left out.
+        if (onMainTaskbar) {
+            ReconcilePins(buttons, shownAt);
+        }
+        TakeInNewApps(buttons.keys);
+    }
+    int at = IndexOf(g_order, key);
+    if (at < 0) {
+        g_order.push_back(Entry{key, Today()});
+        at = (int)g_order.size() - 1;
+    }
+    bool remember = !g_order[at].remember;
+    if (remember && haveButtons && shownAt >= 0) {
+        // It agrees when the order sends it back where it is, or somewhere
+        // only buttons without a key (which the order can't place) set apart.
+        Buttons rest = WithoutButton(buttons, shownAt);
+        int place = PlaceFor(rest, key);
+        bool agrees = place >= 0;
+        for (int i = std::min(place, shownAt);
+             agrees && i < std::max(place, shownAt); i++) {
+            agrees = rest.keys[i].empty();
+        }
+        if (!agrees) {
+            LearnMove(buttons.keys, shownAt);
+        }
+    }
+    // Pruning can't have dropped it while it's on the taskbar, but the index
+    // is checked all the same.
+    at = IndexOf(g_order, key);
+    if (at < 0) {
+        g_order.push_back(Entry{key, Today()});
+        at = (int)g_order.size() - 1;
+    }
+    g_order[at].remember = remember;
+    if (!title.empty()) {
+        g_order[at].title = title;
+    }
+    g_orderChanged = true;
+    ScheduleSave();
+    Wh_Log(L"%s: %s", key.c_str(), remember ? L"remembered" : L"not remembered");
+}
+
+struct MenuApp {
+    std::wstring key;
+    std::wstring title;
+    bool remembered;
+};
+
+// The apps that aren't pinned on the taskbars, left to right, then the marked
+// ones not among them (closed, or pinned since).
+std::vector<MenuApp> AppsForMenu() {
+    std::vector<MenuApp> apps;
+    std::unordered_set<std::wstring> listed;
+    for (void* taskList : TaskListsOfThisThread()) {
+        HDPA buttonGroups = FindButtonGroups(taskList);
+        Buttons buttons;
+        if (!buttonGroups || !ReadButtons(buttonGroups, true, buttons)) {
+            continue;
+        }
+        for (size_t i = 0; i < buttons.keys.size(); i++) {
+            const std::wstring& key = buttons.keys[i];
+            if (!key.empty() && !buttons.pinned[i] && listed.insert(key).second) {
+                apps.push_back({key, TitleOf(buttons.groups[i]), false});
+            }
+        }
+    }
+
+    std::lock_guard<std::mutex> lock(g_orderMutex);
+    for (auto& app : apps) {
+        int at = IndexOf(g_order, app.key);
+        app.remembered = at >= 0 && g_order[at].remember;
+    }
+    for (const auto& entry : g_order) {
+        if (entry.remember && !listed.count(entry.key)) {
+            apps.push_back({entry.key, entry.title, true});
+        }
+    }
+    for (auto& app : apps) {
+        if (app.title.empty()) {
+            app.title = app.key;
+        }
+    }
+    return apps;
+}
+
+// The check marks' Click handlers are code in this mod: they're revoked before
+// it unloads, on the taskbar's thread, since XAML objects belong to the thread
+// that made them.
+struct MenuClick {
+    winrt::weak_ref<wuxc::ToggleMenuFlyoutItem> item;
+    winrt::event_token token;
+};
+
+std::mutex g_menuClicksMutex;
+std::vector<MenuClick> g_menuClicks;
+
+void RevokeMenuClicks() {
+    std::vector<MenuClick> clicks;
+    {
+        std::lock_guard<std::mutex> lock(g_menuClicksMutex);
+        clicks.swap(g_menuClicks);
+    }
+    for (const auto& click : clicks) {
+        try {
+            if (auto item = click.item.get()) {
+                item.Click(click.token);
+            }
+        } catch (...) {
+        }
+    }
+}
+
+using MenuFlyoutItemBaseVector_Append_t =
+    void(__cdecl*)(void* pThis, wuxc::MenuFlyoutItemBase const& item);
+MenuFlyoutItemBaseVector_Append_t MenuFlyoutItemBaseVector_Append_Original;
+
+wuxc::MenuFlyoutSubItem MakeRememberSubmenu() {
+    bool portuguese = IsPortugueseUi();
+    wuxc::MenuFlyoutSubItem submenu;
+    submenu.Name(kMenuItemName);
+    submenu.Text(portuguese ? L"Lembrar posições" : L"Remember positions");
+    wuxc::FontIcon icon;
+    icon.FontFamily(wux::Media::FontFamily(L"Segoe Fluent Icons"));
+    icon.Glyph(L"\xE81C");
+    icon.FontSize(16);
+    submenu.Icon(icon);
+
+    auto items = submenu.Items();
+    if (g_rememberAll) {
+        wuxc::MenuFlyoutItem note;
+        note.Text(portuguese ? L"Todas as apps (definições do mod)"
+                             : L"All apps (mod settings)");
+        note.IsEnabled(false);
+        items.Append(note);
+        return submenu;
+    }
+
+    std::vector<MenuApp> apps = AppsForMenu();
+    if (apps.empty()) {
+        wuxc::MenuFlyoutItem note;
+        note.Text(portuguese ? L"Nenhuma app aberta além das afixadas"
+                             : L"No open apps besides pinned ones");
+        note.IsEnabled(false);
+        items.Append(note);
+        return submenu;
+    }
+    std::lock_guard<std::mutex> lock(g_menuClicksMutex);
+    std::erase_if(g_menuClicks, [](const MenuClick& click) {
+        try {
+            return !click.item.get();
+        } catch (...) {
+            return true;
+        }
+    });
+    for (const auto& app : apps) {
+        wuxc::ToggleMenuFlyoutItem item;
+        item.Text(app.title);
+        item.IsChecked(app.remembered);
+        std::wstring key = app.key;
+        std::wstring title = app.title == app.key ? L"" : app.title;
+        winrt::event_token token = item.Click(
+            [key, title](wf::IInspectable const&, wux::RoutedEventArgs const&) {
+                if (!g_unloading) {
+                    ToggleRemembered(key, title);
+                }
+            });
+        g_menuClicks.push_back({winrt::make_weak(item), token});
+        items.Append(item);
+    }
+    return submenu;
+}
+
+bool IsNamedMenuItem(wuxc::MenuFlyoutItemBase const& item,
+                     const wchar_t* name) {
+    try {
+        if (auto element = item.try_as<wux::FrameworkElement>()) {
+            return element.Name() == name;
+        }
+    } catch (...) {
+    }
+    return false;
+}
+
+thread_local int t_taskbarMenuDepth;
+thread_local bool t_taskbarMenuDone;
+
+void __cdecl MenuFlyoutItemBaseVector_Append_Hook(
+    void* pThis,
+    wuxc::MenuFlyoutItemBase const& item) {
+    if (t_taskbarMenuDepth > 0 && !t_taskbarMenuDone && !g_unloading) {
+        try {
+            if (!item.try_as<wuxc::MenuFlyoutSeparator>() &&
+                !IsNamedMenuItem(item, kMenuItemName) &&
+                !IsNamedMenuItem(item, kMenuDividerName)) {
+                t_taskbarMenuDone = true;
+                wuxc::MenuFlyoutSubItem submenu = MakeRememberSubmenu();
+                wuxc::MenuFlyoutSeparator divider;
+                divider.Name(kMenuDividerName);
+                MenuFlyoutItemBaseVector_Append_Original(pThis, submenu);
+                MenuFlyoutItemBaseVector_Append_Original(pThis, divider);
+            }
+        } catch (...) {
+            Wh_Log(L"Couldn't add the menu");
+        }
+    }
+    MenuFlyoutItemBaseVector_Append_Original(pThis, item);
+}
+
+using ContextMenus_ShowTaskbarSettingsContextMenu_t =
+    void(__cdecl*)(void* target,
+                   void* taskbarSettings,
+                   void* args,
+                   unsigned long long options);
+ContextMenus_ShowTaskbarSettingsContextMenu_t
+    ContextMenus_ShowTaskbarSettingsContextMenu_Original;
+
+void __cdecl ContextMenus_ShowTaskbarSettingsContextMenu_Hook(
+    void* target,
+    void* taskbarSettings,
+    void* args,
+    unsigned long long options) {
+    bool outer = t_taskbarMenuDepth++ == 0;
+    if (outer) {
+        t_taskbarMenuDone = false;
+    }
+    ContextMenus_ShowTaskbarSettingsContextMenu_Original(target, taskbarSettings,
+                                                         args, options);
+    t_taskbarMenuDepth--;
+}
+
+// Taskbar.View.dll is loaded with the taskbar, usually after the mod.
+std::atomic<bool> g_taskbarViewHooked;
+
+bool HookTaskbarView(HMODULE module) {
+    if (g_taskbarViewHooked.exchange(true)) {
+        return false;
+    }
+    WindhawkUtils::SYMBOL_HOOK taskbarViewDllHooks[] = {
+        {
+            {LR"(void __cdecl winrt::Taskbar::implementation::ContextMenus::ShowTaskbarSettingsContextMenu(struct winrt::Windows::UI::Xaml::FrameworkElement const &,struct winrt::WindowsUdk::UI::Shell::TaskbarSettings const &,struct winrt::Windows::UI::Xaml::Input::ContextRequestedEventArgs const &,unsigned __int64))"},
+            &ContextMenus_ShowTaskbarSettingsContextMenu_Original,
+            ContextMenus_ShowTaskbarSettingsContextMenu_Hook,
+        },
+        {
+            {LR"(public: __cdecl winrt::impl::consume_Windows_Foundation_Collections_IVector<struct winrt::Windows::Foundation::Collections::IVector<struct winrt::Windows::UI::Xaml::Controls::MenuFlyoutItemBase>,struct winrt::Windows::UI::Xaml::Controls::MenuFlyoutItemBase>::Append(struct winrt::Windows::UI::Xaml::Controls::MenuFlyoutItemBase const &)const )"},
+            &MenuFlyoutItemBaseVector_Append_Original,
+            MenuFlyoutItemBaseVector_Append_Hook,
+        },
+    };
+    if (!WindhawkUtils::HookSymbols(module, taskbarViewDllHooks,
+                                    ARRAYSIZE(taskbarViewDllHooks))) {
+        Wh_Log(L"No menu: Taskbar.View.dll's symbols weren't found");
+        return false;
+    }
+    return true;
+}
+
+HMODULE TaskbarViewModule() {
+    HMODULE module = GetModuleHandleW(L"Taskbar.View.dll");
+    return module ? module : GetModuleHandleW(L"ExplorerExtensions.dll");
+}
+
+using LoadLibraryExW_t = decltype(&LoadLibraryExW);
+LoadLibraryExW_t LoadLibraryExW_Original;
+
+HMODULE WINAPI LoadLibraryExW_Hook(LPCWSTR fileName, HANDLE file, DWORD flags) {
+    HMODULE module = LoadLibraryExW_Original(fileName, file, flags);
+    if (module && !g_unloading && !g_taskbarViewHooked &&
+        module == TaskbarViewModule() && HookTaskbarView(module)) {
+        Wh_ApplyHookOperations();
+    }
+    return module;
+}
+
+// Runs `callback` on the taskbar's thread and waits for it, through a message
+// sent to the taskbar with a hook on that thread watching for it.
+UINT g_runMessage;
+void (*g_runCallback)();
+
+LRESULT CALLBACK RunCallWndProc(int code, WPARAM wParam, LPARAM lParam) {
+    if (code == HC_ACTION) {
+        const CWPSTRUCT* message = (const CWPSTRUCT*)lParam;
+        if (message->message == g_runMessage && g_runCallback) {
+            g_runCallback();
+        }
+    }
+    return CallNextHookEx(nullptr, code, wParam, lParam);
+}
+
+void RunOnTaskbarThread(void (*callback)()) {
+    HWND tray = FindWindowW(L"Shell_TrayWnd", nullptr);
+    DWORD process = 0;
+    DWORD thread = tray ? GetWindowThreadProcessId(tray, &process) : 0;
+    if (!thread || process != GetCurrentProcessId()) {
+        return;
+    }
+    if (thread == GetCurrentThreadId()) {
+        callback();
+        return;
+    }
+    g_runMessage = RegisterWindowMessageW(L"Windhawk_TaskbarRememberPositions");
+    g_runCallback = callback;
+    HHOOK hook = SetWindowsHookExW(WH_CALLWNDPROC, RunCallWndProc, nullptr,
+                                   thread);
+    if (hook) {
+        // Without a timeout: the handlers must be gone before the mod's code
+        // is.
+        SendMessageW(tray, g_runMessage, 0, 0);
+        UnhookWindowsHookEx(hook);
+    }
+    g_runCallback = nullptr;
+}
+
+// ---------------------------------------------------------------------------
 // Mod lifetime
 // ---------------------------------------------------------------------------
+
+void LoadSettings() {
+    PCWSTR remember = Wh_GetStringSetting(L"remember");
+    g_rememberAll = remember && wcscmp(remember, L"all") == 0;
+    Wh_FreeStringSetting(remember);
+}
 
 void LoadOrder() {
     g_userSid = CurrentUserSid();
@@ -1361,12 +2003,34 @@ BOOL Wh_ModInit() {
             {LR"(const CTaskListWnd::`vftable'{for `ITaskListUI'})"},
             &CTaskListWnd_ITaskListUI_vftable,
         },
+        {
+            {LR"(public: virtual long __cdecl CTaskGroup::GetTitleText(struct ITaskItem *,unsigned short *,int))"},
+            &CTaskGroup_GetTitleText,
+            nullptr,
+            true,
+        },
     };
 
     if (!WindhawkUtils::HookSymbols(taskbarModule, taskbarDllHooks,
                                     ARRAYSIZE(taskbarDllHooks))) {
         Wh_Log(L"HookSymbols failed");
         return FALSE;
+    }
+
+    // The menu. Without it, only the "All apps" setting does anything.
+    if (HMODULE taskbarView = TaskbarViewModule()) {
+        HookTaskbarView(taskbarView);
+    } else {
+        HMODULE kernelBase = GetModuleHandleW(L"kernelbase.dll");
+        auto loadLibraryExW =
+            kernelBase ? (LoadLibraryExW_t)GetProcAddress(kernelBase,
+                                                          "LoadLibraryExW")
+                       : nullptr;
+        if (!loadLibraryExW ||
+            !WindhawkUtils::SetFunctionHook(loadLibraryExW, LoadLibraryExW_Hook,
+                                            &LoadLibraryExW_Original)) {
+            Wh_Log(L"No menu: couldn't watch for Taskbar.View.dll");
+        }
     }
 
     if (!WindhawkUtils::SetFunctionHook(DPA_InsertPtr, DPA_InsertPtr_Hook,
@@ -1386,14 +2050,32 @@ BOOL Wh_ModInit() {
         Wh_Log(L"DPA_InsertPtr from %s", comctl32Path);
     }
 
+    LoadSettings();
     LoadOrder();
     g_saveTimer = CreateThreadpoolTimer(SaveTimerCallback, nullptr, nullptr);
     return TRUE;
 }
 
+// Taskbar.View.dll may have come in between Wh_ModInit and the hooks being
+// set.
+void Wh_ModAfterInit() {
+    if (!g_taskbarViewHooked) {
+        if (HMODULE taskbarView = TaskbarViewModule()) {
+            if (HookTaskbarView(taskbarView)) {
+                Wh_ApplyHookOperations();
+            }
+        }
+    }
+}
+
+void Wh_ModSettingsChanged() {
+    LoadSettings();
+}
+
 void Wh_ModBeforeUninit() {
     Wh_Log(L">");
     g_unloading = true;
+    RunOnTaskbarThread(RevokeMenuClicks);
 }
 
 void Wh_ModUninit() {
