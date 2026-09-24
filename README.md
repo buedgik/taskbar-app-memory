@@ -9,6 +9,8 @@ button is at the end. The same happens after a restart: the apps come back in
 whatever order they happen to start. This mod remembers where the apps you tick
 were, and puts their buttons back there.
 
+![The Remember positions submenu](screenshot.png)
+
 ## What it does
 
 - **Choose the apps**: right-click an empty part of the taskbar, open
